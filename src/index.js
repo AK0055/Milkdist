@@ -14,6 +14,7 @@ app.use(helmet());
 app.use(bodyParser.json());
 app.use(cors());
 app.use(morgan('combined'));
+const PORT = process.env.PORT ||3002;
 
 
 const questions = [
@@ -282,6 +283,6 @@ app.get('/checkCapacity', (req, res) => {
 
 });
 // starting the server
-app.listen(3002, () => {
+app.listen(PORT, () => {
   console.log('listening on port 3002');
 });
