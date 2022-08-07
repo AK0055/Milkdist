@@ -1,4 +1,4 @@
-console.log('Milk distro');
+console.log('>>Milk Distro<<');
 import bodyParser from 'body-parser'
 import cors from 'cors'
 import helmet from 'helmet'
@@ -65,9 +65,10 @@ const updater = [
   },
   {
     type: 'list',
-    name: 'status',
-    message: "Update order status:",
-    choices: ['Placed', 'Packed', 'Dispatched', 'Delivered']
+    name: 'day',
+    message: "Enter day of the week:",
+    choices: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday',
+      'Sunday']
   },
 ];
 const updaterstatus = [
@@ -106,7 +107,6 @@ app.get('/add', (req, res) => {
       if (err) throw err;
       var dbo = db.db("mydb");
       var updatedcap = -1 * Number(answers.qty)
-      console.log(updatedcap)
       var myquery = { day: answers.day };
       var newvalues = { $inc: { cap: updatedcap } };
       dbo.collection("daycapacity").updateOne(myquery, newvalues, function (err, res) {
@@ -154,6 +154,18 @@ app.get('/update/:id', (req, res) => {
         db.close();
       });
     });
+    MongoClient.connect(url, function (err, db) {
+      if (err) throw err;
+      var dbo = db.db("mydb");
+      var updatedcap = -1 * Number(answers.qty)
+      var myquery = { day: answers.day };
+      var newvalues = { $inc: { cap: updatedcap } };
+      dbo.collection("daycapacity").updateOne(myquery, newvalues, function (err, res) {
+        if (err) throw err;
+        console.log("capacity for the day updated");
+        db.close();
+      });
+    });
 
 
 
@@ -180,7 +192,7 @@ app.get('/updateStatus/:id', (req, res) => {
         db.close();
       });
     });
-
+    
 
 
 
@@ -228,9 +240,9 @@ app.get('/delete/:id', (req, res) => {
     if (err) throw err;
     var dbo = db.db("mydb");
     var myquery = { id: qid };
-    dbo.collection("orders").findOne(myquery, function (err, res) {
+    dbo.collection("orders").deleteOne(myquery, function (err, res) {
       if (err) throw err;
-      console.log("order deleted");
+      console.log('order deleted');
       db.close();
     });
   });
@@ -276,13 +288,8 @@ app.get('/checkCapacity', (req, res) => {
     });
   });
 
-
-
-
-
-
 });
 // starting the server
 app.listen(PORT, () => {
-  console.log('listening on port 3002');
+  console.log('listening on port: '+PORT);
 });
